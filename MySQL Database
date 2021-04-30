@@ -1,0 +1,135 @@
+import mysql.connector
+import datetime
+
+class Databases:
+    def __init__(self):
+        self.host = "127.0.0.1"
+        self.user = "root"
+        self.password = ""
+        self.db = "telekom"
+
+    def __connect__(self):
+        self.mydb = mysql.connector.connect(
+            host = self.host,
+            user = self.user,
+            passwd = self.password,
+            database = self.db
+        )
+        self.mycursor = self.mydb.cursor()
+
+    def __disconnect__(self):
+        self.mydb.close
+
+    def __insertData__(self, fullname, age, email):
+        sql = "insert into kunden (fullname, age, email) values (%s, %s, %s)"
+        daten = (fullname, age, email)
+        self.__connect__()
+        self.mycursor.execute(sql,daten)
+        self.mydb.commit()
+        self.__disconnect__()
+
+    def __selectAllData__(self):
+        sql = "select * from kunden"
+        self.__connect__()
+        self.mycursor.execute(sql)
+        result = self.mycursor.fetchall()
+        for data in result:
+            print(data)
+        self.__disconnect__()
+
+    def __selectUser__(self, fullname):
+        sql = "select * from kunden where fullname = %s"
+        data = (fullname,)
+        self.__connect__()
+        self.mycursor.execute(sql,data)
+        result = self.mycursor.fetchall()
+        for data in result:
+            print(data)
+        self.__disconnect__()
+
+    def __updateData__(self, fullname, age):
+        sql = "update kunden set age=%s where fullname=%s"
+        data = (age, fullname)
+        self.__connect__()
+        self.mycursor.execute(sql,data)
+        self.mydb.commit()
+        self.__disconnect__()
+
+    def __deleteUser__(self, fullname):
+        sql = "delete from kunden where fullname=%s"
+        data = (fullname,)
+        self.__connect__()
+        self.mycursor.execute(sql, data)
+        self.mydb.commit()
+        self.__disconnect__()
+
+if __name__ == '__main__':
+    print(str(datetime.datetime.now()))
+    while 1:
+        print("\n[0] Programm Beenden")
+        print("[1] Insert neu user to Database")
+        print("[2] Kunden Liste darstellen")
+        print("[3] Ein bestemmte kunde suchen")
+        print("[4] Update kunde in die Database")
+        print("[5] Ein kunde Löschen\n")
+        auswahl = int(input("Bitte wählen Sie ein Zahl ein: "))
+
+        if auswahl == 0:
+            print("Programm wurde erfolgreich beendet")
+            exit(0)
+
+        if auswahl == 1:
+            kunde = Databases()
+            fullname = input("Fullname: ")
+            age = input("Alte: ")
+            email = input("E-Mail: ")
+            kunde.__insertData__(fullname, age, email)
+            print("Ihre Daten wurden erfolgreich inserted")
+
+        if auswahl == 2:
+            kunde = Databases()
+            kunde.__selectAllData__()
+
+        if auswahl == 3:
+            kunde = Databases()
+            fullname = input("Bitte geben Sie die name der gesuchten kunde ein: ")
+            kunde.__selectUser__(fullname)
+
+        if auswahl == 4:
+            kunde = Databases()
+            fullname = input("Bitte geben Sie die fullname ein: ")
+            age = input("Bitte geben Sie Age ein: ")
+            kunde.__updateData__(fullname, age)
+
+        if auswahl == 5:
+            kunde = Databases()
+            fullname = input("Bitte geben Sie die fullname ein: ")
+            kunde.__deleteUser__(fullname)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
